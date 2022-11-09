@@ -16,7 +16,7 @@ const history = require('./routes/history');
 const chats = require('./routes/chats');
 const cors = require('cors');
 const cookieSession = require('cookie-session');
-// const keys = require('./config/keys');
+const keys = require('./config/keys');
 const ServerIP = require('./routes/ServerIP');
 
 app.use(cors());
@@ -38,7 +38,7 @@ mongoose.Promise = global.Promise;
 mongoose
 	.connect('mongodb://localhost/pwd-db')
 	.then(() => {
-		//projectModel.createIndexes({"ProjectTitle":"text","ProjectDescription":"text"});
+		projectModel.createIndexes({"ProjectTitle":"text","ProjectDescription":"text"});
 		console.log('MongoDB Connected ....');
 	})
 	.catch((err) => console.log(err));

@@ -4,7 +4,8 @@
   "private": true,
   "proxy": {
     "/api/*": {
-      "target": "http://localhost:4500"
+      "target": "http://localhost:4500",
+      "secure": false
     }
   },
   "dependencies": {

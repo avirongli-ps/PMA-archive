@@ -4,7 +4,7 @@ const router = express.Router();
 const mongoose = require('mongoose');
 const passport = require('passport');
 const GoogleStrategy = require('passport-google-oauth20');
-// const keys = require('../config/keys');
+const keys = require('../config/keys');
 const bcrypt = require('bcryptjs');
 const LocalStrategy = require('passport-local').Strategy;
 const cookieSession = require('cookie-session');
@@ -33,59 +33,59 @@ passport.deserializeUser((id, done) => {
 });
 
 // Using google passport strategy
-// passport.use(
-// 	new GoogleStrategy(
-// 		{
-// 			clientID: keys.googleClientID,
-// 			clientSecret: keys.googleClientSecret,
-// 			callbackURL: '/api/auth/google/callback',
-// 		},
-// 		(accessToken, refreshToken, profile, done) => {
-// 			// this is returned after google code to google profile exchange with google
-// 			userModel.findOne({ googleID: profile.id }).then((user) => {
-// 				if (user) {
-// 					//console.log("user found");
-// 					done(null, user);
-// 				} else {
-// 					const newUser = new userModel({
-// 						Fname: profile.name.givenName,
-// 						Lname: profile.name.familyName,
-// 						Email:
-// 							profile.name.givenName +
-// 							profile.name.familyName +
-// 							'@projectwatchdog.com',
-// 						googleID: profile.id,
-// 						Password: profile.id,
-// 						Department: 'Computer Science',
-// 					});
+passport.use(
+	new GoogleStrategy(
+		{
+			clientID: keys.googleClientID,
+			clientSecret: keys.googleClientSecret,
+			callbackURL: '/api/auth/google/callback',
+		},
+		(accessToken, refreshToken, profile, done) => {
+			// this is returned after google code to google profile exchange with google
+			userModel.findOne({ googleID: profile.id }).then((user) => {
+				if (user) {
+					console.log("user found");
+					done(null, user);
+				} else {
+					const newUser = new userModel({
+						Fname: profile.name.givenName,
+						Lname: profile.name.familyName,
+						Email:
+							profile.name.givenName +
+							profile.name.familyName +
+							'@projectwatchdog.com',
+						googleID: profile.id,
+						Password: profile.id,
+						Department: 'Computer Science',
+					});
 
-// 					bcrypt.genSalt(10, (err, salt) => {
-// 						bcrypt.hash(newUser.Password, salt, (err, hash) => {
-// 							//if(err) throw err;
-// 							newUser.Password = hash;
-// 							newUser.save().then((user) => done(null, user));
-// 						});
-// 					});
-// 				}
-// 			});
-// 		}
-// 	)
-// );
+					bcrypt.genSalt(10, (err, salt) => {
+						bcrypt.hash(newUser.Password, salt, (err, hash) => {
+							if(err) throw err;
+							newUser.Password = hash;
+							newUser.save().then((user) => done(null, user));
+						});
+					});
+				}
+			});
+		}
+	)
+);
 
-// router.get(
-// 	'/google',
-// 	passport.authenticate('google', {
-// 		scope: ['profile', 'email'],
-// 	})
-// );
+router.get(
+	'/google',
+	passport.authenticate('google', {
+		scope: ['profile', 'email'],
+	})
+);
 
-// router.get(
-// 	'/google/callback',
-// 	passport.authenticate('google'), // perform code-profile exchange
-// 	(req, res) => {
-// 		res.redirect('http://localhost:4500/api/auth/login');
-// 	}
-// );
+router.get(
+	'/google/callback',
+	passport.authenticate('google'), // perform code-profile exchange
+	(req, res) => {
+		res.redirect('http://localhost:4500/api/auth/login');
+	}
+);
 
 // Using pasport-local strategy
 passport.use(
